@@ -1,0 +1,127 @@
+<html>
+<style>
+	body
+{
+    font-family: arial,verdana,sans-serif;
+    font-size: 10pt;
+}
+
+#inativo
+{
+    background-color: #E2EBED;
+    border-left: 2px solid grey;
+    height: 20px;
+    padding-top: 5px;
+    padding-left: 4px;
+    margin-bottom: 2px;
+}
+
+#ativo
+{
+    background-color: #c0c0c0;
+    border-left: 2px solid green;
+    height: 20px;
+    padding-top: 5px;
+    padding-left: 4px;
+    margin-bottom: 2px;
+    cursor: pointer;
+}
+
+#pageheader
+{
+    border: none;
+    width:860px;
+    height:112;
+    overflow: none;
+    margin-bottom:0px;
+
+
+}
+
+#pagebody
+{
+    background-color: white;
+    width:960px;
+    border: 1px solid #999999;
+
+}
+
+
+#pageleft
+{
+    width:180;
+    margin-left: 0px;
+    margin-right: 0px;
+    float:left;
+    text-align:left;
+    border: 1px solid #000000;
+    font-size: 10pt;
+    font-family: arial,verdana,sans-serif;
+    font-weight: bold;
+
+    
+
+}
+
+#pagecontent
+{
+    margin-right: 0px;
+    margin-left: 20px;
+    margin-top:0px;
+    width:550px;
+
+    
+    text-align:left;
+    color: #333333;
+}
+
+#pageboth
+{
+    clear:both;
+}
+</style>
+<body>
+<center>
+<div id="pageheader">
+    <img border=0 src='app.images/pageheader.png'>
+</div>
+
+<div id="pagebody">
+    <div id="pageleft">
+        <div id='inativo'
+                OnMouseOver="this.id='ativo'" OnMouseOut="this.id='inativo'"
+                OnClick="document.location='?class=PessoasList'">
+        		Pessoas
+        </div>
+        <div id='inativo'
+                OnMouseOver="this.id='ativo'" OnMouseOut="this.id='inativo'"
+                OnClick="document.location='?class=CategoriasList'">
+        		Categoria
+        </div>
+        <div id='inativo'
+                OnMouseOver="this.id='ativo'" OnMouseOut="this.id='inativo'"
+                OnClick="document.location='?class=Receita_DespesaList'">
+        		Receitas/Despesas
+        </div>
+        <div id='inativo'
+                OnMouseOver="this.id='ativo'" OnMouseOut="this.id='inativo'"
+                OnClick="document.location='?class=RelatorioForm'">
+        		Relatorios
+        </div>
+        <div id='inativo'
+                OnMouseOver="this.id='ativo'" OnMouseOut="this.id='inativo'"
+                OnClick="document.location='?class=FimSession&method=encerraSessao'">
+                Sair
+        </div>
+    </div>
+    
+    <div id="pagecontent">
+        #CONTENT#
+    </div>
+    
+    <div id="pageboth"></div>
+</div>
+</center>
+
+</body>
+</html>
