@@ -1,7 +1,7 @@
 <?php
 
 	//class relatorioForm relatorio de vendas por pedido
-	class RelatorioForm extends TPage{
+	class RelatorioDiaForm extends TPage{
 
 		private $form;
 
@@ -72,10 +72,6 @@
 			$cell = $row->addCell('Data');
 			$cell = $row->addCell('Historico');
 			//$cell = $row->addCell('Pessoa');
-			$cell = $row->addCell('Vencimento');
-			$cell->align = 'center';
-			$cell = $row->addCell('Situação');
-			$cell->align = 'center';
 			$cell = $row->addCell('Valor');
 			$cell->align = 'center';
 
@@ -88,75 +84,79 @@
 				//cria um criterio de selecao por intervalo das datas
 				$criterio = new TCriteria;
 				$criterio->add(new TFilter('data_baixa','>=', $data_ini));
-				$criterio->add(new TFilter('data_baixa','<=', $data_fim));
-				$criterio->setProperty('order','id_pessoa');
+				$criterio->add(new TFilter('data_baixa','<=',$data_fim));
+				$criterio->setProperty('order','data_baixa');
 
 				//le todas baixas q satisfazem o criterio
 				$baixas = $repositorio->load($criterio);				
 				
 				//verifica se retornou algum objeto
 				if ($baixas){					
-					
+                    
+                    $despesa_geral = 0;
+                    $receita_geral = 0;
+                    $receitas = 0;
+                    $despesas = 0;
 					$total_geral = 0;												
-					$pessoa = '';					
+                    $data = '';					
 					$i = 1;
 					$count = count($baixas);					
 
 					foreach($baixas as $baixa){							
 						/// Cabeçalho com o nome da pessoa
-						if ($pessoa <> $baixa->nome_pessoa) {							
+						if ($data <> $baixa->data_baixa) {						
 							
-							if ($pessoa <> '') {
-								$row = $table->addRow();
-								$cell = $row->addCell('');
-								$cell = $row->addCell('<b>Sub-Total</b>');
-								$cell = $row->addCell('');
-								$cell = $row->addCell('');					
-								$cell = $row->addCell('<b>'.number_format($sub_total,2,',','.').'</b>');
-								$cell->align = 'right';								
-							}
+							if ($data <> '') {
+                                $row = $table->addRow();
+                                $cell = $row->addCell('');
+                                $cell = $row->addCell('<b>Saldo do Dia</b>');								
+								//$cell = $row->addCell('');					
+								$cell = $row->addCell('<b>'.number_format($saldo_dia,2,',','.').'</b>');
+                                $cell->align = 'right';
+                            }
 							
-							$pessoa   = $baixa->nome_pessoa;							
+							$data   = $baixa->data_baixa;							
 
-							$sub_total = 0;
-
-							$row = $table->addRow();
+                           
+                            $saldo_dia = 0;
+                            $receitas = 0;
+                            $despesas = 0;
+                            
+                            $row = $table->addRow();
 							$row->bgcolor = '#e0e0e0';
-							$cell = $row->addCell('');	
-							$cell = $row->addCell('Pessoa: '.$baixa->id_pessoa . ' - ' . $baixa->nome_pessoa);
+							//$cell = $row->addCell('');	
+							$cell = $row->addCell('Data Baixa: ');
 							$cell->colspan = 3;
-							$cell = $row->addCell('');		
+							//$cell = $row->addCell('');		
+
 						} 						
 
 						$row = $table->addRow();
 						//adiciona as celulas com os dados do item
 						$cell = $row->addCell($this->conv_data_to_br($baixa->data_baixa));
-						$cell = $row->addCell($baixa->historico);						
-						
-						$cell = $row->addCell($this->conv_data_to_br($baixa->vencimento));						
+                        if ($baixa->receita == 0){
+                            $cell = $row->addCell('( - )'.$baixa->historico);
+                            $despesas 	 += $baixa->valor;
+                            $despesa_geral += $baixa->valor;
 
-						if($baixa->baixado == 0){
-							$cell = $row->addCell('Aberto');
-							$cell->align = 'center';
-						} else {
-							$cell = $row->addCell('Baixado');
-							$cell->align = 'center';					
-						}
-
+                        } else {
+                            $cell = $row->addCell('( + )'.$baixa->historico);
+                            $receitas 	 += $baixa->valor;
+                            $receita_geral += $baixa->valor;	
+                        }
+                       
 						$cell = $row->addCell(number_format($baixa->valor,2,',','.'));
 						$cell->align = 'right';
 						
-						//acumula os totalizadores
-						$sub_total 	 += $baixa->valor; 
-						$total_geral += $baixa->valor;						
-
+						$saldo_dia 	 = $receitas - $despesas;          
+                        											
+                                              
 						if ($i == $count) {
-							$row = $table->addRow();
+                            $row = $table->addRow();
 							$cell = $row->addCell('');
-							$cell = $row->addCell('<b>Sub-Total</b>');
-							$cell = $row->addCell('');
-							$cell = $row->addCell('');					
-							$cell = $row->addCell('<b>'.number_format($sub_total,2,',','.').'</b>');
+							$cell = $row->addCell('<b>Saldo do dia</b>');
+							//$cell = $row->addCell('');					
+							$cell = $row->addCell('<b>'.number_format($saldo_dia,2,',','.').'</b>');
 							$cell->align = 'right';													
 						}
 
@@ -164,14 +164,24 @@
 					}									
 						
 				}
-			
+                    $total_geral = $receita_geral - $despesa_geral; 
 					//adiciona uma linha para o total das vendas
-					$row2 = $table->addRow();
+                    $row2 = $table->addRow();
 					$cell = $row2->addCell('.');
-					$row = $table->addRow();
-					$cell = $row->addCell('');
-					$cell = $row->addCell('<b>Total Geral</b>');
-					$cell = $row->addCell('');
+			        $row = $table->addRow();
+                    $cell = $row->addCell('<b>Receitas </b>');
+                    $cell = $row->addCell('');
+                    $cell = $row->addCell('<b>'.number_format($receita_geral,2,',','.').'</b>');
+					$cell->align = 'right';
+                    
+                    $row = $table->addRow();
+                    $cell = $row->addCell('<b>Despesas </b>');
+                    $cell = $row->addCell('');
+                    $cell = $row->addCell('<b>'.number_format($despesa_geral,2,',','.').'</b>');
+					$cell->align = 'right';
+                    
+                    $row = $table->addRow();
+                    $cell = $row->addCell('<b>Saldo Geral</b>');
 					$cell = $row->addCell('');
 					$cell = $row->addCell('<b>'.number_format($total_geral,2,',','.').'</b>');
 					$cell->align = 'right';		
