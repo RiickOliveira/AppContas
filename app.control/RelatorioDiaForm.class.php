@@ -95,8 +95,6 @@
                     
                     $despesa_geral = 0;
                     $receita_geral = 0;
-                    $receitas = 0;
-                    $despesas = 0;
 					$total_geral = 0;												
                     $data = '';					
 					$i = 1;

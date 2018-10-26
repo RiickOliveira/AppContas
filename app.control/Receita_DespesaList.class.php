@@ -35,6 +35,15 @@
 			$table = new TTable;
 			$this->form->add($table);
 
+			/*$nome = new TEntry('nome');
+			
+			$row = $table->addRow();
+			$row->addCell(new Tlabel('Nome:'));
+			$row->addCell($nome);
+
+			$find_button = new TButton('busca');
+			$find_button->setAction(new TAction(array($this,'onReload')),'Buscar');*/
+			
 			$button1 = new TButton('nova_despesa');
 			$obj = new DespesaForm;
 			$button1->setAction(new TAction(array($obj,'onEdit')),'Nova Despesa');
@@ -46,8 +55,9 @@
 			$row = $table->addRow();
 			$row->addCell($button1);
 			$row->addCell($button2);
+			//$row->addCell($find_button);
 
-			$this->form->setFields(array($button1,$button2));
+		$this->form->setFields(array($button1,$button2,/*$find_button*/));
 
 			$this->datagrid = new TDataGrid;
 
@@ -152,6 +162,27 @@
 					$this->datagrid->addItem($receita_despesa);					
 				}
 			}
+			
+			/*$repository = new TRepository('ReceitaDespesa');
+			$criteria = new TCriteria;
+
+			$dados = $this->form->getData('ReceitaDespesaRecord');
+			//verifica se o usuario preencheu o formulario
+			if($dados->nome){
+				//filtra pelo nome do cliente
+				$criteria->add(new TFilter('nome','like',"%{$dados->nome}%"));
+			}
+
+			//carrega os produtos q satisfazem o criterio
+			$clientes = $repository->load($criteria);
+			$this->datagrid->clear();
+			if($clientes){
+
+				foreach($clientes as $cliente){
+					//adiciona o objeto na datagrid
+					$this->datagrid->addItem($cliente);
+				}
+			}*/
 
 			TTransaction::close();	
 

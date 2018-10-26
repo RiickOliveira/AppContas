@@ -20,7 +20,7 @@
 			//cria os campos do formulario
 			$data_ini = new TEntry('data_ini');
 			$data_fim = new TEntry('data_fim');
-			$pessoa = new TCombo('id_pessoa');
+			//$pessoa = new TCombo('id_pessoa');
 			//define os tamanhos
 			$data_ini->setSize(150);
 			$data_fim->setSize(150);
@@ -34,7 +34,7 @@
 			$row->addCell(new TLabel('Data Final: '));
 			$row->addCell($data_fim);
 
-			$row = $table->addRow();
+			/*$row = $table->addRow();
 			$row->addCell(new TLabel('Pessoa: '));
 			$row->addCell($pessoa);
 
@@ -49,7 +49,7 @@
 
 				$itens[$object->id] = $object->nome;
 			}
-			$pessoa->addItens($itens);
+			$pessoa->addItens($itens);*/
 
 			//cria um botao de acao
 			$gera_button = new TButton('');
@@ -61,7 +61,7 @@
 			$row->addCell($gera_button);
 
 			//define campos do formulario
-			$this->form->setFields(array($data_ini,$data_fim,$pessoa,$gera_button));
+			$this->form->setFields(array($data_ini,$data_fim,$gera_button));
 
 			//adiciona o form a pagina
 			parent::add($this->form);
@@ -105,9 +105,9 @@
 				$repositorio = new TRepository('ReceitaDespesa');
 				//cria um criterio de selecao por intervalo das datas
 				$criterio = new TCriteria;
-				//$criterio->add(new TFilter('data_baixa','>=', $data_ini));
-				//$criterio->add(new TFilter('data_baixa','<=', $data_fim));
-				$criterio->add(new TFilter('id_pessoa','=',$dados->id_pessoa));
+				$criterio->add(new TFilter('data_baixa','>=', $data_ini));
+				$criterio->add(new TFilter('data_baixa','<=', $data_fim));
+				//$criterio->add(new TFilter('id_pessoa','=',$dados->id_pessoa));
 				$criterio->setProperty('order','id_pessoa');
 
 				//le todas baixas q satisfazem o criterio
