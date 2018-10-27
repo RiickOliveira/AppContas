@@ -18,11 +18,11 @@
 			$this->form->add($table);
 
 			//cria os campos do formulario
-			$data_ini = new TEntry('data_ini');
-			$data_fim = new TEntry('data_fim');
-			//$pessoa = new TCombo('id_pessoa');
+			//$data_ini = new TEntry('data_ini');
+			//$data_fim = new TEntry('data_fim');
+			$pessoa = new TCombo('id_pessoa');
 			//define os tamanhos
-			$data_ini->setSize(150);
+			/*$data_ini->setSize(150);
 			$data_fim->setSize(150);
 
 			//adiciona uma linha para a data inicial 
@@ -32,9 +32,9 @@
 
 			$row = $table->addRow();
 			$row->addCell(new TLabel('Data Final: '));
-			$row->addCell($data_fim);
+			$row->addCell($data_fim);*/
 
-			/*$row = $table->addRow();
+			$row = $table->addRow();
 			$row->addCell(new TLabel('Pessoa: '));
 			$row->addCell($pessoa);
 
@@ -49,7 +49,7 @@
 
 				$itens[$object->id] = $object->nome;
 			}
-			$pessoa->addItens($itens);*/
+			$pessoa->addItens($itens);
 
 			//cria um botao de acao
 			$gera_button = new TButton('');
@@ -61,7 +61,7 @@
 			$row->addCell($gera_button);
 
 			//define campos do formulario
-			$this->form->setFields(array($data_ini,$data_fim,$gera_button));
+			$this->form->setFields(array(/*$data_ini,$data_fim,*/$pessoa,$gera_button));
 
 			//adiciona o form a pagina
 			parent::add($this->form);
@@ -74,8 +74,8 @@
 			$this->form->setData($dados);
 
 			//le os campos do formulario, converte para o padrao americano
-			$data_ini = $this->conv_data_to_us($dados->data_ini);
-			$data_fim = $this->conv_data_to_us($dados->data_fim);
+			//$data_ini = $this->conv_data_to_us($dados->data_ini);
+			//$data_fim = $this->conv_data_to_us($dados->data_fim);
 
 			
 			//instancia uma nova tabela
@@ -105,83 +105,186 @@
 				$repositorio = new TRepository('ReceitaDespesa');
 				//cria um criterio de selecao por intervalo das datas
 				$criterio = new TCriteria;
-				$criterio->add(new TFilter('data_baixa','>=', $data_ini));
-				$criterio->add(new TFilter('data_baixa','<=', $data_fim));
-				//$criterio->add(new TFilter('id_pessoa','=',$dados->id_pessoa));
+				//$criterio->add(new TFilter('data_baixa','>=', $data_ini));
+				//$criterio->add(new TFilter('data_baixa','<=', $data_fim));
+				$criterio->add(new TFilter('id_pessoa','=',$dados->id_pessoa));
 				$criterio->setProperty('order','id_pessoa');
 
 				//le todas baixas q satisfazem o criterio
 				$baixas = $repositorio->load($criterio);				
 				//var_dump($baixas);
 				//verifica se retornou algum objeto
+				$total_geral = 0;
 				if ($baixas){					
+					
+					$receitas = array();
+					$despesas = array();
+					foreach($baixas as $baixa){
+						if ($baixa->receita){
+							$receitas[] = $baixa;
+						} else {
+							$despesas[] = $baixa;	
+						}
+					}				
+					
 					
 					$total_geral = 0;												
 					$pessoa = '';					
-					$i = 1;
-					$count = count($baixas);					
+					$i 		= 1;
+					$count 	= count($despesas);					
 
-					foreach($baixas as $baixa){							
-						/// Cabeçalho com o nome da pessoa
-						if ($pessoa <> $baixa->nome_pessoa) {						
+					$row = $table->addRow();
+					$row->bgcolor = '#e0e0e0';
+						
+					$cell = $row->addCell('Pessoa: '.$baixa->id_pessoa . ' - ' . $baixa->nome_pessoa);
+					$cell->colspan = 3;
+					$cell = $row->addCell('');
+					$cell = $row->addCell('');
+					
+					$row = $table->addRow();
+					$row->bgcolor = '#e0e0e0';
+					$cell = $row->addCell('<b>Despesas</b>');
+					$cell = $row->addCell('');
+					$cell = $row->addCell('');
+					$cell = $row->addCell('');
+					$cell = $row->addCell('');
+					
+					foreach($despesas as $baixa){							
+								
+							/// Cabeçalho com o nome da pessoa
+							if ($pessoa <> $baixa->nome_pessoa) {						
+								
+								if ($pessoa <> '') {
+									$row = $table->addRow();
+									$cell = $row->addCell('');
+									$cell = $row->addCell('<b>Sub-Total</b>');
+									$cell = $row->addCell('');
+									$cell = $row->addCell('');					
+									$cell = $row->addCell('<b>'.number_format($sub_total,2,',','.').'</b>');
+									$cell->align = 'right';								
+								}
+								
+								$pessoa   = $baixa->nome_pessoa;							
+
+								$sub_total = 0;
+
+								
+								
+							} 			
+									
+
+							$row = $table->addRow();
+							//adiciona as celulas com os dados do item
+							$cell = $row->addCell($this->conv_data_to_br($baixa->data_baixa));
+							$cell = $row->addCell($baixa->historico);						
 							
-							if ($pessoa <> '') {
+							$cell = $row->addCell($this->conv_data_to_br($baixa->vencimento));						
+
+							if($baixa->baixado == 0){
+								$cell = $row->addCell('Aberto');
+								$cell->align = 'center';
+							} else {
+								$cell = $row->addCell('Baixado');
+								$cell->align = 'center';					
+							}
+
+							$cell = $row->addCell(number_format($baixa->valor,2,',','.'));
+							$cell->align = 'right';
+							
+							//acumula os totalizadores
+							$sub_total 	 += $baixa->valor; 
+							$total_geral += $baixa->valor;						
+
+							if ($i == $count) {
 								$row = $table->addRow();
 								$cell = $row->addCell('');
 								$cell = $row->addCell('<b>Sub-Total</b>');
 								$cell = $row->addCell('');
 								$cell = $row->addCell('');					
 								$cell = $row->addCell('<b>'.number_format($sub_total,2,',','.').'</b>');
-								$cell->align = 'right';								
+								$cell->align = 'right';													
 							}
+
+							$i++;
+					} 
+
+					/// Receitas
+					$pessoa = '';					
+					$i 		= 1;
+					$count 	= count($receitas);					
+
+					$row = $table->addRow();
+					$row->bgcolor = '#e0e0e0';
+					$cell = $row->addCell('<b>Receitas</b>');
+					$cell = $row->addCell('');
+					$cell = $row->addCell('');
+					$cell = $row->addCell('');
+					$cell = $row->addCell('');
+					
+					foreach($receitas as $baixa){							
+								
+							/// Cabeçalho com o nome da pessoa
+							if ($pessoa <> $baixa->nome_pessoa) {						
+								
+								if ($pessoa <> '') {
+									$row = $table->addRow();
+									$cell = $row->addCell('');
+									$cell = $row->addCell('<b>Sub-Total</b>');
+									$cell = $row->addCell('');
+									$cell = $row->addCell('');					
+									$cell = $row->addCell('<b>'.number_format($sub_total,2,',','.').'</b>');
+									$cell->align = 'right';								
+								}
+								
+								$pessoa   = $baixa->nome_pessoa;							
+
+								$sub_total = 0;
+
+								/*$row = $table->addRow();
+								$row->bgcolor = '#e0e0e0';
+									
+								$cell = $row->addCell('Pessoa: '.$baixa->id_pessoa . ' - ' . $baixa->nome_pessoa);
+								$cell->colspan = 3;
+								$cell = $row->addCell('');
+								$cell = $row->addCell('');*/
+								
+							} 			
+									
+
+							$row = $table->addRow();
+							//adiciona as celulas com os dados do item
+							$cell = $row->addCell($this->conv_data_to_br($baixa->data_baixa));
+							$cell = $row->addCell($baixa->historico);						
 							
-							$pessoa   = $baixa->nome_pessoa;							
+							$cell = $row->addCell($this->conv_data_to_br($baixa->vencimento));						
 
-							$sub_total = 0;
+							if($baixa->baixado == 0){
+								$cell = $row->addCell('Aberto');
+								$cell->align = 'center';
+							} else {
+								$cell = $row->addCell('Baixado');
+								$cell->align = 'center';					
+							}
 
-							$row = $table->addRow();
-							$row->bgcolor = '#e0e0e0';
-							$cell = $row->addCell('');	
-							$cell = $row->addCell('Pessoa: '.$baixa->id_pessoa . ' - ' . $baixa->nome_pessoa);
-							$cell->colspan = 3;
-							$cell = $row->addCell('');		
-						} 						
+							$cell = $row->addCell(number_format($baixa->valor,2,',','.'));
+							$cell->align = 'right';
+							
+							//acumula os totalizadores
+							$sub_total 	 += $baixa->valor; 
+							$total_geral += $baixa->valor;						
 
-						$row = $table->addRow();
-						//adiciona as celulas com os dados do item
-						$cell = $row->addCell($this->conv_data_to_br($baixa->data_baixa));
-						$cell = $row->addCell($baixa->historico);						
-						
-						$cell = $row->addCell($this->conv_data_to_br($baixa->vencimento));						
+							if ($i == $count) {
+								$row = $table->addRow();
+								$cell = $row->addCell('');
+								$cell = $row->addCell('<b>Sub-Total</b>');
+								$cell = $row->addCell('');
+								$cell = $row->addCell('');					
+								$cell = $row->addCell('<b>'.number_format($sub_total,2,',','.').'</b>');
+								$cell->align = 'right';													
+							}
 
-						if($baixa->baixado == 0){
-							$cell = $row->addCell('Aberto');
-							$cell->align = 'center';
-						} else {
-							$cell = $row->addCell('Baixado');
-							$cell->align = 'center';					
-						}
-
-						$cell = $row->addCell(number_format($baixa->valor,2,',','.'));
-						$cell->align = 'right';
-						
-						//acumula os totalizadores
-						$sub_total 	 += $baixa->valor; 
-						$total_geral += $baixa->valor;						
-
-						if ($i == $count) {
-							$row = $table->addRow();
-							$cell = $row->addCell('');
-							$cell = $row->addCell('<b>Sub-Total</b>');
-							$cell = $row->addCell('');
-							$cell = $row->addCell('');					
-							$cell = $row->addCell('<b>'.number_format($sub_total,2,',','.').'</b>');
-							$cell->align = 'right';													
-						}
-
-						$i++;										
-					}									
-						
+							$i++;
+					} 
 				}
 			
 					//adiciona uma linha para o total das vendas

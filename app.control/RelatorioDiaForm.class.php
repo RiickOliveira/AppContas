@@ -100,7 +100,9 @@
 					$i = 1;
 					$count = count($baixas);					
 
-					foreach($baixas as $baixa){							
+					foreach($baixas as $baixa){	
+						
+						
 						/// Cabeçalho com o nome da pessoa
 						if ($data <> $baixa->data_baixa) {						
 							
