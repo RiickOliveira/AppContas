@@ -166,9 +166,7 @@
 								
 								$pessoa   = $baixa->nome_pessoa;							
 
-								$sub_total = 0;
-
-								
+								$sub_total = 0;								
 								
 							} 			
 									
@@ -183,25 +181,26 @@
 							if($baixa->baixado == 0){
 								$cell = $row->addCell('Aberto');
 								$cell->align = 'center';
+								$sub_total 	 += $baixa->valor;
 							} else {
 								$cell = $row->addCell('Baixado');
 								$cell->align = 'center';					
 							}
 
-							$cell = $row->addCell(number_format($baixa->valor,2,',','.'));
+							$cell = $row->addCell('R$ '.number_format($baixa->valor,2,',','.'));
 							$cell->align = 'right';
 							
 							//acumula os totalizadores
-							$sub_total 	 += $baixa->valor; 
-							$total_geral += $baixa->valor;						
+							 
+							//$total_geral += $baixa->valor;						
 
 							if ($i == $count) {
 								$row = $table->addRow();
 								$cell = $row->addCell('');
-								$cell = $row->addCell('<b>Sub-Total</b>');
+								$cell = $row->addCell('<b>Saldo a pagar:</b>');
 								$cell = $row->addCell('');
 								$cell = $row->addCell('');					
-								$cell = $row->addCell('<b>'.number_format($sub_total,2,',','.').'</b>');
+								$cell = $row->addCell('<b>'.'R$ '.number_format($sub_total,2,',','.').'</b>');
 								$cell->align = 'right';													
 							}
 
@@ -232,21 +231,13 @@
 									$cell = $row->addCell('<b>Sub-Total</b>');
 									$cell = $row->addCell('');
 									$cell = $row->addCell('');					
-									$cell = $row->addCell('<b>'.number_format($sub_total,2,',','.').'</b>');
+									$cell = $row->addCell('<b>'.'R$ '.number_format($sub_total,2,',','.').'</b>');
 									$cell->align = 'right';								
 								}
 								
 								$pessoa   = $baixa->nome_pessoa;							
-
-								$sub_total = 0;
-
-								/*$row = $table->addRow();
-								$row->bgcolor = '#e0e0e0';
-									
-								$cell = $row->addCell('Pessoa: '.$baixa->id_pessoa . ' - ' . $baixa->nome_pessoa);
-								$cell->colspan = 3;
-								$cell = $row->addCell('');
-								$cell = $row->addCell('');*/
+								
+								$sub_total = 0;						
 								
 							} 			
 									
@@ -261,25 +252,25 @@
 							if($baixa->baixado == 0){
 								$cell = $row->addCell('Aberto');
 								$cell->align = 'center';
+								$sub_total 	 += $baixa->valor;
 							} else {
 								$cell = $row->addCell('Baixado');
 								$cell->align = 'center';					
 							}
 
-							$cell = $row->addCell(number_format($baixa->valor,2,',','.'));
-							$cell->align = 'right';
+							$cell = $row->addCell('R$ '.number_format($baixa->valor,2,',','.'));
+							$cell->align = 'right';						
 							
-							//acumula os totalizadores
-							$sub_total 	 += $baixa->valor; 
-							$total_geral += $baixa->valor;						
+							 
+							//$total_geral += $baixa->valor;						
 
 							if ($i == $count) {
 								$row = $table->addRow();
 								$cell = $row->addCell('');
-								$cell = $row->addCell('<b>Sub-Total</b>');
+								$cell = $row->addCell('<b>Saldo a receber:</b>');
 								$cell = $row->addCell('');
 								$cell = $row->addCell('');					
-								$cell = $row->addCell('<b>'.number_format($sub_total,2,',','.').'</b>');
+								$cell = $row->addCell('<b>'.'R$'.number_format($sub_total,2,',','.').'</b>');
 								$cell->align = 'right';													
 							}
 
@@ -287,7 +278,7 @@
 					} 
 				}
 			
-					//adiciona uma linha para o total das vendas
+					/*//adiciona uma linha para o total das vendas
 					$row2 = $table->addRow();
 					$cell = $row2->addCell('.');
 					$row = $table->addRow();
@@ -296,7 +287,7 @@
 					$cell = $row->addCell('');
 					$cell = $row->addCell('');
 					$cell = $row->addCell('<b>'.number_format($total_geral,2,',','.').'</b>');
-					$cell->align = 'right';		
+					$cell->align = 'right';	*/	
 								
 				
 				TTransaction::close();

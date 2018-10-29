@@ -111,7 +111,7 @@
                                 $cell = $row->addCell('');
                                 $cell = $row->addCell('<b>Saldo do Dia</b>');								
 								//$cell = $row->addCell('');					
-								$cell = $row->addCell('<b>'.number_format($saldo_dia,2,',','.').'</b>');
+								$cell = $row->addCell('<b>'.'R$ '.number_format($saldo_dia,2,',','.').'</b>');
                                 $cell->align = 'right';
                             }
 							
@@ -145,7 +145,7 @@
                             $receita_geral += $baixa->valor;	
                         }
                        
-						$cell = $row->addCell(number_format($baixa->valor,2,',','.'));
+						$cell = $row->addCell('R$ '.number_format($baixa->valor,2,',','.'));
 						$cell->align = 'right';
 						
 						$saldo_dia 	 = $receitas - $despesas;          
@@ -156,7 +156,7 @@
 							$cell = $row->addCell('');
 							$cell = $row->addCell('<b>Saldo do dia</b>');
 							//$cell = $row->addCell('');					
-							$cell = $row->addCell('<b>'.number_format($saldo_dia,2,',','.').'</b>');
+							$cell = $row->addCell('<b>'.'R$ '.number_format($saldo_dia,2,',','.').'</b>');
 							$cell->align = 'right';													
 						}
 
@@ -171,19 +171,19 @@
 			        $row = $table->addRow();
                     $cell = $row->addCell('<b>Receitas </b>');
                     $cell = $row->addCell('');
-                    $cell = $row->addCell('<b>'.number_format($receita_geral,2,',','.').'</b>');
+                    $cell = $row->addCell('<b>'.'R$ '.number_format($receita_geral,2,',','.').'</b>');
 					$cell->align = 'right';
                     
                     $row = $table->addRow();
                     $cell = $row->addCell('<b>Despesas </b>');
                     $cell = $row->addCell('');
-                    $cell = $row->addCell('<b>'.number_format($despesa_geral,2,',','.').'</b>');
+                    $cell = $row->addCell('<b>'.'R$ '.number_format($despesa_geral,2,',','.').'</b>');
 					$cell->align = 'right';
                     
                     $row = $table->addRow();
                     $cell = $row->addCell('<b>Saldo Geral</b>');
 					$cell = $row->addCell('');
-					$cell = $row->addCell('<b>'.number_format($total_geral,2,',','.').'</b>');
+					$cell = $row->addCell('<b>'.'R$ '.number_format($total_geral,2,',','.').'</b>');
 					$cell->align = 'right';		
 								
 				
