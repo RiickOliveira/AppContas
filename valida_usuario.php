@@ -16,12 +16,13 @@
 
 	try{
 		
-		$login = $_POST['login'];
-		$senha = $_POST['senha'];
+		$login = htmlspecialchars($_POST['login'],ENT_QUOTES);
+		$senha = htmlspecialchars($_POST['senha'],ENT_QUOTES);
+		
 
 		TTransaction::open('my_appcontas');
 		TTransaction::setLogger( new TLoggerTXT('C:\Users\Ricardo\Desktop\log5.txt'));
-
+		
 		TTransaction::log("* INICIANDO TRANSAÇAO");
 
 		$repositorio = new TRepository('usuarios');

@@ -1,66 +1,116 @@
+Rodrigo Oliveira, [30.10.18 18:26]
 <?php
-
-    class Despesas{
-
-        private $descricao;
-        private $despesas_fixas = array();
-        private $despesas_variaveis = array();
-
-        function __construct($descricao){
-            $this->descricao = $descricao;
-        }
-
-        
-        function addDespesaFixa(Despesas $desp_fixas){
-
-            array_push($this->despesas_fixas,$desp_fixas);
-
-        }
-
-        function addDespesaVariavel(Despesas $desp_variavel){
-
-            array_push($this->despesas_variaveis,$desp_variavel);
-
-        }
-
-        function print($marginLeft){
-            echo "$this->descricao<br>";                
-            
-            if (count($this->despesas_fixas) > 0) {
-                echo "<br /> <p style='margin-left: $marginLeft'> ";
-            }
-            
-            foreach ($this->despesas_fixas as $desp_fixas) {                    
-                $marginLeft = $marginLeft + 20;    
-                $desp_fixas->print($marginLeft);
-            }
-
+class Categoria{
+    private $descricao;
+    private $nivel;
+    private $subCategorias = array();    
+    
+    function __construct($descricao){        
+        $this->descricao = $descricao;
+        $this->nivel = 1;
     }
+    
+    function addCategoria($descricao){
+        $categoria = new Categoria($descricao);
+        array_push($this->subCategorias, $categoria);
+        $categoria->setNivel(count($this->subCategorias));
+        return $categoria;
+    }   
 
+    function setNivel($nivel){
+        $this->nivel = $nivel;
+    }
+    
+    function print($codigo){
+        $codigo = $codigo . $this->nivel . '.';
+
+        echo "<li>$codigo $this->descricao</li>"; 
+            
+        foreach ($this->subCategorias as $subCategoria) { 
+            echo "<ul>";
+            $subCategoria->print($codigo);
+            echo "</ul>";     
+        }             
+    }
 }
 
-$topico = new Despesas('Despesas');
-$sub_topico = new Despesas('Despesas Fixas');
-$sub_topico2 = new Despesas('Despesas Variaveis');
+class CategoriaList{
 
-$tipo = new Despesas('Impostos');
-$imposto1 = new Despesas('IPI');
-$imposto2 = new Despesas('ICMS');
+    public $categorias = array();
 
-$tipo2 = new Despesas('Folha de Pagamento');
-$setor = new Despesas('Setor Desenvolvimento');
+    function addSubCategoria(Categoria $categoria){
+        
+        array_push($this->categorias, $categoria);
+        $categoria->setNivel(count($this->categorias));
+        return $categoria;
+        
+    }   
+
+    function print($codigo){
+         
+        foreach ($this->categorias as $categoria) { 
+            echo "<ul>";
+            $categoria->print($codigo);
+            echo "</ul>";     
+        }             
+    }
+    
+}   
+
+$despesas = new Categoria('Despesas');
+$despesaFixa = $despesas->addCategoria('Despesas fixas');
+$impostos = $despesaFixa->addCategoria('Impostos');
+$impostos->addCategoria('ICMS');
+$impostos->addCategoria('IPI');
+
+$folhaPagamento = $despesaFixa->addCategoria('Folha de pagamento');
+$folhaPagamento->addCategoria('Setor Desenvolvimento');
+
+$despesaVariavel = $despesas->addCategoria("Despesas variáveis");
+$comissoes = $despesaVariavel->addCategoria('Comissões');
+$comissoes->addCategoria('Setor Desenvolvimento');
+$comissoes->addCategoria('Setor Marketing');
+
+$combustivel = $despesaVariavel->addCategoria("Combustível");
+$combustivel->addCategoria('Toyota Etios');
+$combustivel->addCategoria('Renault Duster');
+$combustivel->addCategoria('Honda Civic');
+
+$receitas = new Categoria('Receitas');
+$receita = $receitas->addCategoria('Receitas sobre Vendas');
+$receita->addCategoria('Receitas Fiscais');
+$receita->addCategoria('Outras receitas');
+$receita_finan = $receitas->addCategoria('Receitas Financeiras');
+$receita_finan->addCategoria('Juros Obtidos');
+
+$ativo_fixo = new Categoria('Ativo Fixo');
+$imoveis = $ativo_fixo->addCategoria('Imóveis');
+
+$listaDespesas = new CategoriaList('');
+$listaDespesas->addSubCategoria($despesas);
+$listaDespesas->addSubCategoria($receitas);
+$listaDespesas->addSubCategoria($ativo_fixo);
 
 
+echo '
+<html>
+<head>
+<style>
+ul li { 
+    list-style-type: none }
+</style>
+</head>
 
-$topico->addDespesaFixa($sub_topico);
-$topico->addDespesaVariavel($sub_topico2);
-$sub_topico->addDespesaFixa($tipo);
+<body>
+<ul>
+';    
 
-$tipo->addDespesaFixa($imposto1);
-$tipo->addDespesaFixa($imposto2);
+$listaDespesas->print('');
+ 
 
-$topico->print(20);
-
-
+echo '
+</ul>
+</body>
+</html>'
 
 ?>
