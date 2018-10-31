@@ -1,4 +1,4 @@
-Rodrigo Oliveira, [30.10.18 18:26]
+
 <?php
 class Categoria{
     private $descricao;
@@ -42,16 +42,15 @@ class CategoriaList{
         
         array_push($this->categorias, $categoria);
         $categoria->setNivel(count($this->categorias));
-        return $categoria;
         
     }   
 
-    function print($codigo){
-         
-        foreach ($this->categorias as $categoria) { 
-            echo "<ul>";
-            $categoria->print($codigo);
-            echo "</ul>";     
+    function print(){
+
+        foreach ($this->categorias as $categoria) {             
+            
+            $categoria->print('');
+
         }             
     }
     
@@ -86,7 +85,7 @@ $receita_finan->addCategoria('Juros Obtidos');
 $ativo_fixo = new Categoria('Ativo Fixo');
 $imoveis = $ativo_fixo->addCategoria('Imóveis');
 
-$listaDespesas = new CategoriaList('');
+$listaDespesas = new CategoriaList();
 $listaDespesas->addSubCategoria($despesas);
 $listaDespesas->addSubCategoria($receitas);
 $listaDespesas->addSubCategoria($ativo_fixo);
@@ -105,7 +104,7 @@ ul li {
 <ul>
 ';    
 
-$listaDespesas->print('');
+$listaDespesas->print();
  
 
 echo '
